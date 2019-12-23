@@ -1,5 +1,8 @@
 <template>
-  <div></div>
+  <div>
+    <!-- 复制对象 -->
+    Object.assign({}, this.form);
+  </div>
 </template>
 <script>
 export default {
