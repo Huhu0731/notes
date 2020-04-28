@@ -27,14 +27,27 @@ export default {
               var blob = new Blob([res.data], {
                 type: "application/octet-stream;charset=UTF-8"
               });
-              var downloadElement = document.createElement("a");
-              downloadElement.download = `${this.termName}${this.levelName}${this.gradeName}${this.className}学生操行评语列表.xls`;
-              downloadElement.href = window.URL.createObjectURL(blob); // 创建下载的链接
-              // console.log(downloadElement.href);
-              downloadElement.click(); // 点击下载
-              document.body.appendChild(downloadElement);
-              document.body.removeChild(downloadElement); // 下载完成移除元素
-              window.URL.revokeObjectURL(downloadElement.href); // 释放掉blob对象
+              let _this = this;
+              if (res.data.type === "application/json") {
+                // 这里是接口报错  弹出报错信息 而不是把错误信息下载在表格里
+                var reader = new FileReader();
+                reader.readAsText(blob, "utf-8");
+                reader.onload = function(e) {
+                  let resultObj = JSON.parse(reader.result);
+                  if (resultObj.code !== 0) {
+                    _this.$message({ message: resultObj.msg, type: "error" });
+                  }
+                };
+              } else {
+                var downloadElement = document.createElement("a");
+                downloadElement.download = `${this.termName}${this.levelName}${this.gradeName}${this.className}学生操行评语列表.xls`;
+                downloadElement.href = window.URL.createObjectURL(blob); // 创建下载的链接
+                // console.log(downloadElement.href);
+                downloadElement.click(); // 点击下载
+                document.body.appendChild(downloadElement);
+                document.body.removeChild(downloadElement); // 下载完成移除元素
+                window.URL.revokeObjectURL(downloadElement.href); // 释放掉blob对象
+              }
             }
           }
         })
